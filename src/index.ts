@@ -10,7 +10,7 @@ import {
   getRequest,
 } from './core/storage.js';
 import type { CapturedRequest } from './types/index.js';
-import { messages, formatDuration, getStatusDescription } from './utils/messages.js';
+import { formatDuration, getStatusDescription } from './utils/messages.js';
 
 export interface DevToolsOptions {
   port: number;

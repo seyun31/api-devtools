@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Text, useInput, useApp } from 'ink';
 import { NetworkTable } from './NetworkTable.js';
 import { DetailView } from './DetailView.js';

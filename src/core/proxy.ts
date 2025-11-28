@@ -1,7 +1,7 @@
 import http from 'http';
 import httpProxy from 'http-proxy';
 import { EventEmitter } from 'events';
-import type { CapturedRequest, HttpRequest, HttpResponse } from '../types/index.js';
+import type { CapturedRequest } from '../types/index.js';
 
 export class ProxyServer extends EventEmitter {
   private server?: http.Server;
@@ -55,44 +55,49 @@ export class ProxyServer extends EventEmitter {
       const originalWrite = res.write.bind(res);
       const originalEnd = res.end.bind(res);
       let responseBody = '';
-      const proxyServer = this;
 
-      res.write = function (chunk: any, ...args: any[]): boolean {
-        if (chunk) {
-          responseBody += chunk.toString();
-        }
-        return originalWrite(chunk, ...args);
-      };
+      res.write = new Proxy(originalWrite, {
+        apply: (target, thisArg, args: Parameters<typeof res.write>) => {
+          const chunk = args[0];
+          if (chunk) {
+            responseBody += chunk.toString();
+          }
+          return Reflect.apply(target, thisArg, args);
+        },
+      }) as typeof res.write;
 
-      res.end = function (chunk?: any, ...args: any[]): typeof res {
-        const endTime = Date.now();
-        const duration = endTime - startTime;
+      res.end = new Proxy(originalEnd, {
+        apply: (target, thisArg, args: Parameters<typeof res.end>) => {
+          const endTime = Date.now();
+          const duration = endTime - startTime;
 
-        if (chunk) {
-          responseBody += chunk.toString();
-        }
+          const chunk = args[0];
+          if (chunk) {
+            responseBody += chunk.toString();
+          }
 
-        capturedRequest.response = {
-          status: res.statusCode || 200,
-          statusText: res.statusMessage || 'OK',
-          headers: res.getHeaders() as Record<string, string>,
-          body: responseBody,
-          size: Buffer.byteLength(responseBody),
-          duration,
-        };
+          capturedRequest.response = {
+            status: res.statusCode || 200,
+            statusText: res.statusMessage || 'OK',
+            headers: res.getHeaders() as Record<string, string>,
+            body: responseBody,
+            size: Buffer.byteLength(responseBody),
+            duration,
+          };
 
-        capturedRequest.timing = {
-          requestSent: 0,
-          waiting: duration * 0.7, // 대략적인 TTFB
-          contentDownload: duration * 0.3,
-          total: duration,
-        };
+          capturedRequest.timing = {
+            requestSent: 0,
+            waiting: duration * 0.7, // 대략적인 TTFB
+            contentDownload: duration * 0.3,
+            total: duration,
+          };
 
-        // 이벤트 발생
-        proxyServer.emit('request', capturedRequest);
+          // 이벤트 발생
+          this.emit('request', capturedRequest);
 
-        return originalEnd(chunk, ...args);
-      };
+          return Reflect.apply(target, thisArg, args);
+        },
+      }) as typeof res.end;
 
       // 프록시 또는 직접 응답
       if (this.target) {

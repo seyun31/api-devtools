@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { sendRequest, startDevTools, listRequests, runSavedRequest } from './index.js';
+import { sendRequest, startDevTools, runSavedRequest } from './index.js';
 import { loadRequests, deleteRequest } from './core/storage.js';
 import type { RequestOptions } from './core/http-client.js';
 

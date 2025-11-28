@@ -1,4 +1,4 @@
-import type { CapturedRequest, HttpRequest, HttpResponse } from '../types/index.js';
+import type { CapturedRequest, HttpRequest } from '../types/index.js';
 
 export interface RequestOptions {
   headers?: Record<string, string>;
