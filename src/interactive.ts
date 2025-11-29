@@ -53,8 +53,8 @@ export async function startInteractive(): Promise<void> {
   console.log('║   ░▒▓██║  ██║██║     ██║    ██████╔╝███████╗ ╚████╔╝      ║');
   console.log('║   ░▒▓╚═╝  ╚═╝╚═╝     ╚═╝    ╚═════╝ ╚══════╝  ╚═══╝       ║');
   console.log('║                                                           ║');
-  console.log('║          API 테스트 & 디버깅용 CLI 개발 도구              ║');
-  console.log('║                                                           ║');
+  console.log('║   API 요청을 캡처하고, 테스트부터 코드 변환까지          ║');
+  console.log('║   한 흐름으로 이어주는 올인원 CLI 도구                   ║');
   console.log('╚═══════════════════════════════════════════════════════════╝');
   console.log('\n');
 
@@ -81,6 +81,7 @@ async function mainMenu(): Promise<void> {
   switch (action) {
     case 'test':
       await apiTestFlow();
+      await mainMenu();
       break;
     case 'proxy':
       await proxyModeFlow();
@@ -207,6 +208,7 @@ async function afterRequestMenu(): Promise<void> {
   switch (next) {
     case 'new':
       await apiTestFlow();
+      await mainMenu();
       break;
     case 'main':
       await mainMenu();

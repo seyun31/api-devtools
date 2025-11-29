@@ -9,19 +9,27 @@ interface AppProps {
   port: number;
   target?: string;
   requests: CapturedRequest[];
+  onSave?: (request: CapturedRequest) => void;
   onExit: () => void;
 }
 
-export function App({ port, target, requests, onExit }: AppProps) {
+export function App({ port, target, requests, onSave, onExit }: AppProps) {
   const { exit } = useApp();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showDetail, setShowDetail] = useState(false);
 
   // 키보드 입력 처리
   useInput((input, key) => {
+    // Q 또는 Ctrl+C: 프로그램 종료
     if (input === 'q' || (key.ctrl && input === 'c')) {
       onExit();
       exit();
+    }
+
+    // 저장 (상세 보기에서만)
+    if (input === 's' && showDetail && onSave && requests[selectedIndex]) {
+      onSave(requests[selectedIndex]);
+      return;
     }
 
     if (key.upArrow) {
@@ -69,8 +77,14 @@ export function App({ port, target, requests, onExit }: AppProps) {
       {/* 단축키 도움말 */}
       <Box marginTop={1} borderStyle="single" borderColor="gray" padding={1}>
         <Text dimColor>
-          {messages.keyboard.shortcuts.upDown} | {messages.keyboard.shortcuts.enter} |{' '}
-          {messages.keyboard.shortcuts.q}
+          {showDetail ? (
+            <>S: 저장 | Q: 종료</>
+          ) : (
+            <>
+              {messages.keyboard.shortcuts.upDown} | {messages.keyboard.shortcuts.enter} |{' '}
+              {messages.keyboard.shortcuts.q}
+            </>
+          )}
         </Text>
       </Box>
     </Box>

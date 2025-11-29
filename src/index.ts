@@ -36,6 +36,11 @@ export async function startDevTools(options: DevToolsOptions): Promise<void> {
       port: options.port,
       target: options.target,
       requests,
+      onSave: (request: CapturedRequest) => {
+        const name = `${request.request.method}-${Date.now()}`;
+        saveRequestToStorage(name, request);
+        console.log(`\n✓ 요청을 "${name}"으로 저장했습니다\n`);
+      },
       onExit: () => {
         proxy.stop();
         process.exit(0);
