@@ -8,6 +8,7 @@ import {
   formatStatus,
   getStatusDescription,
 } from '../utils/messages.js';
+import { CodeGenerator } from './CodeGenerator.js';
 
 interface RequestResultProps {
   request: CapturedRequest;
@@ -18,6 +19,7 @@ interface RequestResultProps {
 export function RequestResult({ request, onSave, onExit }: RequestResultProps) {
   const { exit } = useApp();
   const [showFullResponse, setShowFullResponse] = useState(false);
+  const [showCodeGenerator, setShowCodeGenerator] = useState(false);
 
   const { request: req, response: res, error } = request;
 
@@ -34,8 +36,18 @@ export function RequestResult({ request, onSave, onExit }: RequestResultProps) {
     if (input === 's' && onSave) {
       onSave('saved-request');
     }
+
+    if (input === 'c') {
+      setShowCodeGenerator(true);
+    }
   });
 
+  // CodeGenerator 모드일 때
+  if (showCodeGenerator) {
+    return <CodeGenerator request={request} onExit={() => setShowCodeGenerator(false)} />;
+  }
+
+  // 기본 화면
   return (
     <Box flexDirection="column" padding={1}>
       {/* 헤더 */}
@@ -111,7 +123,7 @@ export function RequestResult({ request, onSave, onExit }: RequestResultProps) {
       {/* 단축키 */}
       <Box marginTop={1} borderStyle="single" borderColor="gray" padding={1}>
         <Text dimColor>
-          F: 전체 응답 보기/접기 | S: 저장 | Q: 종료
+          F: 전체 응답 보기/접기 | C: 코드 생성 | S: 저장 | Q: 종료
         </Text>
       </Box>
     </Box>
