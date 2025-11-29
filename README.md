@@ -1,6 +1,7 @@
 # 🔍 API DevTools
 
 [![CI](https://github.com/seyun31/api-devtools/actions/workflows/ci.yml/badge.svg)](https://github.com/seyun31/api-devtools/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/@seyun31/api-devtools.svg?style=flat-square)](https://www.npmjs.com/package/@seyun31/api-devtools)
 
 > API 요청을 캡처하고, 테스트부터 코드 변환까지 한 흐름으로 이어주는 올인원 CLI 도구
 

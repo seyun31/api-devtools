@@ -1,6 +1,6 @@
 {
   "name": "@seyun31/api-devtools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "API 요청을 캡처하고, 테스트부터 코드 변환까지 한 흐름으로 이어주는 올인원 CLI 도구",
   "main": "dist/index.js",
   "type": "module",
