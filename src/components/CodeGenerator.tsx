@@ -16,8 +16,10 @@ type Language = 'js' | 'ts';
 export function CodeGenerator({ request, onExit }: CodeGeneratorProps) {
   const [step, setStep] = useState<Step>('library');
   const [library, setLibrary] = useState<Library | null>(null);
-  const [language, setLanguage] = useState<Language | null>(null);
-  const [testFramework, setTestFramework] = useState<TestFramework | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_language, setLanguage] = useState<Language | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_testFramework, setTestFramework] = useState<TestFramework | null>(null);
   const [generatedCode, setGeneratedCode] = useState<string>('');
 
   useInput((input, key) => {

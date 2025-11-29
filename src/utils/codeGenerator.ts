@@ -15,7 +15,7 @@ export function generateCurl(request: CapturedRequest): string {
   if (body) {
     // JSON인 경우 포맷팅
     try {
-      const parsed = JSON.parse(body);
+      const parsed: unknown = JSON.parse(body);
       const formatted = JSON.stringify(parsed, null, 2).replace(/'/g, "'\\''");
       curl += ` \\\n  -d '${formatted}'`;
     } catch {

@@ -29,7 +29,7 @@ export function generateJestTest(request: CapturedRequest): string {
 
     if (response.body) {
       try {
-        const bodyData = JSON.parse(response.body);
+        const bodyData: unknown = JSON.parse(response.body);
         if (typeof bodyData === 'object' && bodyData !== null) {
           code += `    expect(response.data).toMatchObject({\n`;
           code += `      // TODO: Add expected response structure\n`;
@@ -96,7 +96,7 @@ export function generateVitestTest(request: CapturedRequest): string {
 
     if (response.body) {
       try {
-        const bodyData = JSON.parse(response.body);
+        const bodyData: unknown = JSON.parse(response.body);
         if (typeof bodyData === 'object' && bodyData !== null) {
           code += `    expect(response.data).toMatchObject({\n`;
           code += `      // TODO: Add expected response structure\n`;
