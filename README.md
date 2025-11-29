@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/seyun31/api-devtools/actions/workflows/ci.yml/badge.svg)](https://github.com/seyun31/api-devtools/actions/workflows/ci.yml)
 
-> > API 요청을 캡처하고, 테스트부터 코드 변환까지 한 흐름으로 이어주는 올인원 CLI 도구
+> API 요청을 캡처하고, 테스트부터 코드 변환까지 한 흐름으로 이어주는 올인원 CLI 도구
 
 ---
 
