@@ -3,6 +3,41 @@ import { sendRequest, startDevTools, runSavedRequest } from './index.js';
 import { loadRequests, deleteRequest } from './core/storage.js';
 import type { RequestOptions } from './core/http-client.js';
 
+interface MainMenuAnswers {
+  action: string;
+}
+
+interface ApiTestAnswers {
+  method: string;
+  url: string;
+}
+
+interface ConfirmAnswer {
+  hasBody?: boolean;
+  hasHeaders?: boolean;
+}
+
+interface BodyAnswer {
+  body: string;
+}
+
+interface HeaderAnswer {
+  headerInput: string;
+}
+
+interface ProxyAnswer {
+  target: string;
+}
+
+interface SavedRequestAnswer {
+  selectedRequest: string;
+}
+
+interface ActionAnswer {
+  action: string;
+  next?: string;
+}
+
 // Interactive 메인 메뉴
 export async function startInteractive(): Promise<void> {
   console.clear();
@@ -14,7 +49,7 @@ export async function startInteractive(): Promise<void> {
 
 // 메인 메뉴
 async function mainMenu(): Promise<void> {
-  const { action } = await inquirer.prompt([
+  const { action } = await inquirer.prompt<MainMenuAnswers>([
     {
       type: 'list',
       name: 'action',
@@ -51,7 +86,7 @@ async function mainMenu(): Promise<void> {
 
 // API 요청 테스트 플로우
 async function apiTestFlow(): Promise<void> {
-  const answers = await inquirer.prompt([
+  const answers = await inquirer.prompt<ApiTestAnswers>([
     {
       type: 'list',
       name: 'method',
@@ -76,7 +111,7 @@ async function apiTestFlow(): Promise<void> {
 
   // POST,PUT이면 body 입력
   if (answers.method === 'POST' || answers.method === 'PUT') {
-    const { hasBody } = await inquirer.prompt([
+    const { hasBody } = await inquirer.prompt<ConfirmAnswer>([
       {
         type: 'confirm',
         name: 'hasBody',
@@ -86,7 +121,7 @@ async function apiTestFlow(): Promise<void> {
     ]);
 
     if (hasBody) {
-      const { body } = await inquirer.prompt([
+      const { body } = await inquirer.prompt<BodyAnswer>([
         {
           type: 'input',
           name: 'body',
@@ -96,7 +131,7 @@ async function apiTestFlow(): Promise<void> {
       ]);
 
       try {
-        options.body = JSON.parse(body);
+        options.body = JSON.parse(body) as Record<string, unknown>;
       } catch {
         console.log('\n⚠️  JSON 형식이 잘못됐어요. 문자열로 전송할게요.\n');
         options.body = body;
@@ -105,7 +140,7 @@ async function apiTestFlow(): Promise<void> {
   }
 
   // 헤더 추가
-  const { hasHeaders } = await inquirer.prompt([
+  const { hasHeaders } = await inquirer.prompt<ConfirmAnswer>([
     {
       type: 'confirm',
       name: 'hasHeaders',
@@ -115,7 +150,7 @@ async function apiTestFlow(): Promise<void> {
   ]);
 
   if (hasHeaders) {
-    const { headerInput } = await inquirer.prompt([
+    const { headerInput } = await inquirer.prompt<HeaderAnswer>([
       {
         type: 'input',
         name: 'headerInput',
@@ -142,7 +177,7 @@ async function apiTestFlow(): Promise<void> {
 
 // 요청 후 메뉴
 async function afterRequestMenu(): Promise<void> {
-  const { next } = await inquirer.prompt([
+  const { next } = await inquirer.prompt<ActionAnswer>([
     {
       type: 'list',
       name: 'next',
@@ -170,7 +205,7 @@ async function afterRequestMenu(): Promise<void> {
 
 // 프록시 모드 플로우
 async function proxyModeFlow(): Promise<void> {
-  const { target } = await inquirer.prompt([
+  const { target } = await inquirer.prompt<ProxyAnswer>([
     {
       type: 'input',
       name: 'target',
@@ -207,7 +242,7 @@ async function savedRequestsFlow(): Promise<void> {
     return;
   }
 
-  const { selectedRequest } = await inquirer.prompt([
+  const { selectedRequest } = await inquirer.prompt<SavedRequestAnswer>([
     {
       type: 'list',
       name: 'selectedRequest',
@@ -227,7 +262,7 @@ async function savedRequestsFlow(): Promise<void> {
     return;
   }
 
-  const { action } = await inquirer.prompt([
+  const { action } = await inquirer.prompt<ActionAnswer>([
     {
       type: 'list',
       name: 'action',

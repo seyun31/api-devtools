@@ -32,7 +32,7 @@ export function loadRequests(): SavedRequest[] {
 
   try {
     const data = fs.readFileSync(REQUESTS_FILE, 'utf-8');
-    return JSON.parse(data);
+    return JSON.parse(data) as SavedRequest[];
   } catch {
     return [];
   }

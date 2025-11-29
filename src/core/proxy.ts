@@ -19,15 +19,15 @@ export class ProxyServer extends EventEmitter {
   async start(): Promise<void> {
     this.server = http.createServer((req, res) => {
       const startTime = Date.now();
-      const requestId = `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 
       // 요청 정보 캡처
       const capturedRequest: CapturedRequest = {
         id: requestId,
         request: {
           id: requestId,
-          method: req.method || 'GET',
-          url: req.url || '/',
+          method: req.method ?? 'GET',
+          url: req.url ?? '/',
           headers: req.headers as Record<string, string>,
           timestamp: Date.now(),
         },
@@ -41,7 +41,7 @@ export class ProxyServer extends EventEmitter {
 
       // 요청 본문 캡처
       let requestBody = '';
-      req.on('data', chunk => {
+      req.on('data', (chunk: Buffer) => {
         requestBody += chunk.toString();
       });
 
@@ -58,7 +58,7 @@ export class ProxyServer extends EventEmitter {
 
       res.write = new Proxy(originalWrite, {
         apply: (target, thisArg, args: Parameters<typeof res.write>) => {
-          const chunk = args[0];
+          const chunk = args[0] as Buffer | string | undefined;
           if (chunk) {
             responseBody += chunk.toString();
           }
@@ -71,14 +71,14 @@ export class ProxyServer extends EventEmitter {
           const endTime = Date.now();
           const duration = endTime - startTime;
 
-          const chunk = args[0];
+          const chunk = args[0] as Buffer | string | undefined;
           if (chunk) {
             responseBody += chunk.toString();
           }
 
           capturedRequest.response = {
-            status: res.statusCode || 200,
-            statusText: res.statusMessage || 'OK',
+            status: res.statusCode ?? 200,
+            statusText: res.statusMessage ?? 'OK',
             headers: res.getHeaders() as Record<string, string>,
             body: responseBody,
             size: Buffer.byteLength(responseBody),

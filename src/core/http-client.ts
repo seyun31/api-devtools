@@ -11,7 +11,7 @@ export async function sendHttpRequest(
   url: string,
   options: RequestOptions = {}
 ): Promise<CapturedRequest> {
-  const requestId = `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
   const startTime = Date.now();
 
   // 요청 준비
@@ -62,7 +62,7 @@ export async function sendHttpRequest(
 
     // JSON이면 포맷팅
     try {
-      const json = JSON.parse(responseText);
+      const json = JSON.parse(responseText) as unknown;
       responseBody = JSON.stringify(json, null, 2);
     } catch {
       // JSON이 아니면 그대로 사용

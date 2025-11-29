@@ -4,6 +4,19 @@ import { Command } from 'commander';
 import { startDevTools, sendRequest, runSavedRequest, listRequests } from './index.js';
 import { startInteractive } from './interactive.js';
 
+interface HeaderOptions {
+  header?: string[];
+}
+
+interface DataAndHeaderOptions extends HeaderOptions {
+  data?: string;
+}
+
+interface ProxyOptions {
+  port: string;
+  target: string;
+}
+
 const program = new Command();
 
 program
@@ -20,7 +33,7 @@ program
   .command('get <url>')
   .description('GET 요청을 보냅니다')
   .option('-H, --header <header...>', '헤더 추가 (예: "Authorization: Bearer token")')
-  .action(async (url, options) => {
+  .action(async (url: string, options: HeaderOptions) => {
     const headers = parseHeaders(options.header);
     await sendRequest('GET', url, { headers });
   });
@@ -31,9 +44,9 @@ program
   .description('POST 요청을 보냅니다')
   .option('-d, --data <data>', '요청 본문 (JSON)')
   .option('-H, --header <header...>', '헤더 추가')
-  .action(async (url, options) => {
+  .action(async (url: string, options: DataAndHeaderOptions) => {
     const headers = parseHeaders(options.header);
-    const body = options.data ? JSON.parse(options.data) : undefined;
+    const body = options.data ? (JSON.parse(options.data) as Record<string, unknown>) : undefined;
     await sendRequest('POST', url, { headers, body });
   });
 
@@ -43,9 +56,9 @@ program
   .description('PUT 요청을 보냅니다')
   .option('-d, --data <data>', '요청 본문 (JSON)')
   .option('-H, --header <header...>', '헤더 추가')
-  .action(async (url, options) => {
+  .action(async (url: string, options: DataAndHeaderOptions) => {
     const headers = parseHeaders(options.header);
-    const body = options.data ? JSON.parse(options.data) : undefined;
+    const body = options.data ? (JSON.parse(options.data) as Record<string, unknown>) : undefined;
     await sendRequest('PUT', url, { headers, body });
   });
 
@@ -54,7 +67,7 @@ program
   .command('delete <url>')
   .description('DELETE 요청을 보냅니다')
   .option('-H, --header <header...>', '헤더 추가')
-  .action(async (url, options) => {
+  .action(async (url: string, options: HeaderOptions) => {
     const headers = parseHeaders(options.header);
     await sendRequest('DELETE', url, { headers });
   });
@@ -63,7 +76,7 @@ program
 program
   .command('run <nameOrUrl>')
   .description('저장된 요청을 실행하거나 URL로 GET 요청을 보냅니다')
-  .action(async nameOrUrl => {
+  .action(async (nameOrUrl: string) => {
     await runSavedRequest(nameOrUrl);
   });
 
@@ -81,10 +94,10 @@ program
   .description('프록시 모드로 API DevTools를 시작합니다')
   .option('-p, --port <port>', '프록시 서버 포트', '8888')
   .option('-t, --target <url>', '프록시 타겟 URL', '')
-  .action(async options => {
+  .action(async (options: ProxyOptions) => {
     await startDevTools({
       port: parseInt(options.port),
-      target: options.target,
+      target: options.target || undefined,
     });
   });
 
